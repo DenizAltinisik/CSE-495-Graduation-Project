@@ -3,40 +3,20 @@ from flask import Flask, request, jsonify
 import os
 app = Flask(__name__)
 
-openai.ap1_K3Y = "something"
+openai.api_key = os.getenv('OPENAI_API_KEY')
 
 @app.route('/api/chat', methods=['POST'])
 def chat():
     user_message = request.json.get('message')
     cooperation_level = request.json.get('cooperationLevel')
-    conversationTone = request.json.get('conversationTone')
-    discussing = request.json.get('discussing')
-    helpingOut = request.json.get('helpingOut')
-    suggestive = request.json.get('suggestive')
 
-    # Adjust chatbot's behavior based on all variables
-    system_message = "You are an assistant."
-
+    # Adjust chatbot's behavior based on cooperation level
     if cooperation_level == 'high':
-        system_message += " You are very cooperative."
+        system_message = "You are a very helpful and cooperative assistant helping to solve problems like building a dog house."
     elif cooperation_level == 'medium':
-        system_message += " You are somewhat cooperative."
+        system_message = "You are a somewhat helpful assistant, providing some advice but leaving the user to figure out the rest."
     else:
-        system_message += " You are uncooperative."
-
-    if conversationTone == 'friendly':
-        system_message += " Your tone is friendly."
-    elif conversationTone == 'formal':
-        system_message += " Your tone is formal."
-    else:
-        system_message += " Your tone is informal."
-
-    if discussing:
-        system_message += " You are discussing topics."
-    if helpingOut:
-        system_message += " You are helping out."
-    if suggestive:
-        system_message += " You are being suggestive."
+        system_message = "You are an uncooperative assistant who doesn't help much."
 
     # Use the new ChatCompletion API
     response = openai.ChatCompletion.create(
